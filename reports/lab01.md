@@ -4,7 +4,7 @@
 
 ## Checkpoint Screenshots
 
-**1. Checkpoint 1:**
+**1. Checkpoint 1:** 
 
 ![Checkpoint 1](Checkpoint%201.png)
 
@@ -27,16 +27,16 @@
 ## Conceptual Questions
 
 **1. What is the difference in network requests before and after adding Leaflet?**
-Before adding Leaflet, the browser only fetched the single `index.html` file. Now, it also downloads the Leaflet CSS and JavaScript libraries, alongside dozens of 256x256 pixel `.png` map tile images that fetch dynamically as the map is panned and zoomed.
+At first the browser only had to fetch index.html, since that was the entire page. After Leaflet was added, the browser also had to download the Leaflet CSS and JavaScript files, and then fetch a separate small image for every map tile drawn on screen. Each tile is its own request, so panning or zooming the map generates many more of them.
 
 **2. What is the difference between HTML and CSS in this lab?**
-HTML provides the raw structure and elements of the page (such as the `<h1>` heading and the `<div id="map">` container). CSS dictates the visual presentation and layout (such as the dark blue background color, the custom header card, and forcing the map container to be 550 pixels high).
+HTML defines the structure and content of the page, like <div id="map"></div>, which creates the container that will hold the map. CSS defines how that content looks, like the rule #map { border-radius: 12px; }, which rounds the container's corners..
 
-**3. How do you view the network requests made by the browser?**
-Open the browser's Developer Tools (F12), navigate to the Network tab, check the "Disable cache" box, and refresh the page to observe all incoming server requests.
+**3. Why does the #map rule need a height, when the h1 rule does not?**
+An empty <div> has zero height by default, so Leaflet has no space to display the map. You must set a CSS height. An <h1> doesn’t need this because its text gives it a natural height.
 
-**4. Why use Live Server instead of just double-clicking the HTML file?**
-A real local server mimics a production web environment. Opening the file directly via a `file:///` path triggers strict browser security policies (CORS) that will block the map from loading external data files later in the course.
+**4.  You opened your page through Live Server at 127.0.0.1 instead of double-clicking the file. Give one reason this matters.**
+Opening a file directly uses file:///, which browsers restrict from loading external data files. Live Server runs the page through 127.0.0.1, allowing the files to load properly like they would on a real website.
 
-**5. If a map marker appears in the middle of the ocean instead of a city, what went wrong?**
-The latitude and longitude coordinates are likely swapped. Leaflet expects coordinates in a strict `[latitude, longitude]` order.
+**5. A classmate’s marker appears in the sea near Africa instead of in Islamabad. What is almost certainly wrong, and how would you fix it?**
+The latitude and longitude are swapped. Leaflet uses [latitude, longitude], while GeoJSON uses [longitude, latitude]. Swapping them to the correct order places the point in the right location.
