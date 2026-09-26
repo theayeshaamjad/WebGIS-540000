@@ -20,7 +20,7 @@
 
 ![Checkpoint 4](Checkpoint%204.png)
 
-**5. Checkpoint 5 (Live Site):**
+**5. Checkpoint 5 (https://theayeshaamjad.github.io/WebGIS-540000/):**
 
 ![Checkpoint 5](Checkpoint%205.png)
 
