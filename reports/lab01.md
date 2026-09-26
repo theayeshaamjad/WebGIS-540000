@@ -3,11 +3,26 @@
 **Course:** Web GIS, SCEE-IGIS, NUST
 
 ## Checkpoint Screenshots
-1. **Checkpoint 1:** ![Checkpoint 1](Checkpoint%201.png)
-2. **Checkpoint 2:** ![Checkpoint 2](Checkpoint%202.png)
-3. **Checkpoint 3:** ![Checkpoint 3](Checkpoint%203.png)
-4. **Checkpoint 4:** ![Checkpoint 4](Checkpoint%204.png)
-5. **Checkpoint 5 (Live Site):** ![Checkpoint 5](Checkpoint%205.png)
+
+**1. Checkpoint 1:**
+
+![Checkpoint 1](Checkpoint%201.png)
+
+**2. Checkpoint 2:**
+
+![Checkpoint 2](Checkpoint%202.png)
+
+**3. Checkpoint 3:**
+
+![Checkpoint 3](Checkpoint%203.png)
+
+**4. Checkpoint 4:**
+
+![Checkpoint 4](Checkpoint%204.png)
+
+**5. Checkpoint 5 (Live Site):**
+
+![Checkpoint 5](Checkpoint%205.png)
 
 ## Conceptual Questions
 
