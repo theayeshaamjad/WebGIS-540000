@@ -4,23 +4,94 @@
   <meta charset="utf-8">
   <title>My First Web GIS</title>
   
-  <!-- 1. Load the Leaflet Library -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   
   <style>
-    body { font-family: system-ui, sans-serif; margin: 0; padding: 24px; background: #f4f6f8; color: #13293d; }
-    h1 { color: #0b2545; margin: 0 4px; }
-    .subtitle { color: #5a6b7b; margin-top: 0; }
-    #map { height: 480px; width: 100%; border-radius: 8px; }
+    /* Dark Blue Geospatial Dashboard Theme */
+    body { 
+      font-family: system-ui, -apple-system, sans-serif; 
+      margin: 0; 
+      padding: 40px 24px; 
+      background: #0b132b; 
+      color: #e6f1ff; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header-card {
+      background: rgba(28, 37, 65, 0.8);
+      border: 1px solid #3a506b;
+      padding: 24px 40px;
+      border-radius: 12px;
+      margin-bottom: 32px;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 { 
+      color: #6fffe9; 
+      margin: 0 0 8px 0; 
+      font-size: 2.4rem;
+      letter-spacing: 1px;
+    }
+
+    .subtitle { 
+      color: #8da9c4; 
+      margin: 0; 
+      font-size: 1.1rem;
+    }
+
+    .engineer-badge {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 6px 12px;
+      background: #1c2541;
+      border: 1px solid #5bc0be;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #5bc0be;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    #map { 
+      height: 550px; 
+      width: 100%; 
+      max-width: 880px;
+      border-radius: 12px; 
+      border: 2px solid #3a506b;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+
+    /* Override default Leaflet popup to match dark theme */
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+      background: #1c2541;
+      color: #e6f1ff;
+      border: 1px solid #3a506b;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .leaflet-popup-content {
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      margin: 14px 16px;
+    }
   </style>
 </head>
 <body>
-  <h1>Islamabad</h1>
-  <p class="subtitle">Web GIS, Lab 01. IGIS, NUST.</p>
+  
+  <div class="header-card">
+    <h1>AYESHA AMJAD</h1>
+    <p class="subtitle">Web GIS, Lab 01. SCEE-IGIS, NUST.</p>
+    <span class="engineer-badge">First Web Map</span>
+  </div>
+
   <div id="map"></div>
 
-  <!-- 2. Add the Map Script -->
   <script>
     const map = L.map('map').setView([33.6844, 73.0479], 12);
     
@@ -31,7 +102,7 @@
     
     L.marker([33.6423, 72.9906])
       .addTo(map)
-      .bindPopup('NUST H-12, Islamabad')
+      .bindPopup('<b>NUST H-12</b><br>Islamabad, Pakistan')
       .openPopup();
   </script>
 </body>
