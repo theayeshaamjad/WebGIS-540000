@@ -226,13 +226,6 @@ The population classification and legend remain functional after filtering.
 
 ![Checkpoint 9 — Area Comparison](screenshots/CP%209%20Table.png)
 
-### Additional QGIS Evidence
-
-![Checkpoint 9 — QGIS Measurement 1](screenshots/9%20R1.png)
-
-![Checkpoint 9 — QGIS Measurement 2](screenshots/9%20R2.png)
-
-The original district dataset was exported into two projected coordinate systems:
 
 - **EPSG:3857:** WGS 84 / Pseudo-Mercator
 - **EPSG:32643:** WGS 84 / UTM Zone 43N
