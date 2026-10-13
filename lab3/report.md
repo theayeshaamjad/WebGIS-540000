@@ -1,408 +1,274 @@
 
 # Lab 3: District Dashboard — Layers, Controls and Interaction
 
+**Interactive web map:** [View the published Lab 3 dashboard](https://theayeshaamjad.github.io/WebGIS-540000/lab3/)
+
+**Local preview:** [Open with Live Server](http://127.0.0.1:5500/lab3/index.html)
+
+**GitHub repository:** [WebGIS-540000](https://github.com/theayeshaamjad/WebGIS-540000)
+
 ---
 
 ## Checkpoint 1: Set Up the Project
 
-![Checkpoint 1 — Project Structure](screenshots/Checkpoint%201.png)
+![Checkpoint 1 — Lab 3 project structure](Checkpoint%20Screenshots/Checkpoint%201.png)
 
-The Lab 3 project was created in the existing WebGIS repository while preserving Lab 2. Separate `index.html`, `style.css`, and `app.js` files were created, and the district GeoJSON data from Lab 2 was reused in the `lab3/data` folder.
+Lab 3 was created as a separate folder in the existing WebGIS repository, preserving the Lab 2 map. The project uses `index.html`, `style.css`, and `app.js`, with the district GeoJSON copied from Lab 2 into `lab3/data/`.
 
 ---
 
 ## Checkpoint 2: Make a Point Layer in QGIS
 
-![Checkpoint 2 — Centroid and Point on Surface](screenshots/Checkpoint%202.png)
+![Checkpoint 2 — Centroid and point on surface](Checkpoint%20Screenshots/Checkpoint%202.png)
 
-### Centroid and Point-on-Surface Comparison
+The **Centroids** and **Point on Surface** tools were applied to the district polygons. **Sibi, Balochistan**, is the irregularly shaped district whose geometric centroid was identified outside its boundary. A point on surface is guaranteed to lie inside its own polygon, making it more suitable for placing district population symbols.
 
-The Centroids and Point on Surface tools were applied to the district polygons in QGIS.
+### Exported Point-Layer Measurements
 
-The comparison identified **Sibi, Balochistan**, as the district whose geometric centroid falls outside its own boundary.
-
-The Point on Surface tool was selected for the population symbols because it guarantees that each point lies inside its corresponding district. This prevents a symbol from appearing to represent a neighbouring district.
-
-### Exported Point Layer
-
-| Measurement | Result |
+| Item | Recorded Value |
 |---|---|
-| Output file | `district_points.geojson` |
-| Feature count | 160 |
-| Coordinate system | EPSG:4326 — WGS 84 |
-| Coordinate precision | 5 decimal places |
-| File size | **[Enter actual file size]** |
+| File | `district_points.geojson` |
+| Number of point features | **160** |
+| Coordinate reference system | **EPSG:4326 (WGS 84)** |
+| Export coordinate precision | **5 decimal places** |
+| File size | **64.7 KB (66,291 bytes)** |
 
-The exported point layer retains the district attributes, including `pop_2023`, for use in proportional-symbol mapping.
+The point features inherit district attributes, including `pop_2023`, which is used to size the proportional symbols.
 
 ---
 
 ## Checkpoint 3: The Page, Map and Basemaps
 
-![Checkpoint 3 — Esri Tile Request](screenshots/Checkpoint%203.png)
+![Checkpoint 3 — Esri tile request in Network tab](Checkpoint%20Screenshots/Checkpoint%203.png)
 
-Three basemaps were configured in Leaflet:
+The Leaflet layer control offers three basemaps: **Light (Carto Positron)**, **OpenStreetMap**, and **Satellite (Esri)**. The Network tab was used to inspect an Esri World Imagery tile request.
 
-- Light (Carto Positron)
-- OpenStreetMap
-- Satellite (Esri)
-
-The layer control allows the user to switch between basemaps while preserving the thematic overlays.
-
-### Esri Tile URL Inspection
-
-The Network tab was used to inspect a successful Esri satellite tile request.
-
-**Recorded request URL:**
+**Observed Esri request URL:**
 
 `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/5/12/22`
 
-| URL Component | Value | Description |
-|---|---|---|
-| Zoom level (`z`) | 5 | Map zoom level |
-| Tile row (`y`) | 12 | Tile row |
-| Tile column (`x`) | 22 | Tile column |
+| URL Component | Value | Meaning |
+|---|---:|---|
+| `z` | 5 | Zoom level |
+| `y` | 12 | Tile row |
+| `x` | 22 | Tile column |
 
-**Answer:** Esri uses the URL order `{z}/{y}/{x}`. The first number indicates the zoom level, the second identifies the tile row, and the third identifies the tile column.
-
-The request returned HTTP status **200 OK**, confirming successful loading of the satellite tile.
+**Answer:** The Esri tile URL uses `{z}/{y}/{x}` order. The screenshot shows an HTTP **200 OK** response, confirming the selected satellite tile loaded successfully. The default district map was subsequently viewed over OpenStreetMap because the CARTO tiles displayed an API-key notice.
 
 ---
 
 ## Checkpoint 4: Population Density Choropleth
 
-![Checkpoint 4 — Population Density Map](screenshots/Checkpoint%204.png)
+![Checkpoint 4 — Density map, legend and layer control](Checkpoint%20Screenshots/Checkpoint%204.png)
 
-The district boundaries were displayed as a population-density choropleth using the 2023 census population and district area.
+District polygons were shaded using **population density**, calculated dynamically from `pop_2023 / area_km2`. Density (people per km²) is more appropriate for a choropleth than a total-population count because it accounts for different district areas.
 
-Population density was calculated using:
-
-**Population density = Population / Area (km²)**
-
-The map uses five blue classes to represent population density.
-
-### Population Density Classification
-
-| Population Density (people/km²) | Colour |
+| Population Density (people/km²) | Map Colour |
 |---|---|
-| Up to 50 | Very light blue |
+| 50 or below | Very light blue |
 | Above 50 to 150 | Light blue |
 | Above 150 to 400 | Medium blue |
 | Above 400 to 1,000 | Dark blue |
 | Above 1,000 | Very dark blue |
-| Missing census data | Grey |
+| Missing census population | Grey |
 
-### Why Use Population Density?
-
-Population density allows districts of different geographical sizes to be compared meaningfully.
-
-Unlike total population, density accounts for the area occupied by the population. Therefore, it is more appropriate for colouring administrative polygons.
-
-The dashboard successfully displays **160 districts**, a population-density legend, and a layer control containing the three basemaps and thematic overlay.
+The dashboard displayed **160 districts**, a density legend, and a layer control with three basemaps and the **Population density** overlay.
 
 ---
 
-## Checkpoint 5: Hover Highlighting and Information Panel
+## Checkpoint 5: Highlighting and an Information Panel
 
-![Checkpoint 5 — District Highlighting](screenshots/Checkpoint%205.png)
+![Checkpoint 5 — District hover interaction](Checkpoint%20Screenshots/Checkpoint%205.png)
 
-### District Zoom Interaction
+![Checkpoint 5 — Zoom to selected district](Checkpoint%20Screenshots/Checkpoint%205%20zoom%20in.png)
 
-![Checkpoint 5 — Zoom to District](screenshots/Checkpoint%205%20zoom%20in.png)
+Hovering over a district darkens and thickens its outline, displays a tooltip, and updates the district information panel. Moving the pointer away calls `resetStyle()` to restore its original colour. Clicking a district calls `fitBounds()` to zoom to its extent. The information panel was positioned at bottom-left so that it does not overlap the legend or layer control.
 
-The dashboard was configured with mouseover, mouseout and click events for district polygons.
+**Observed example — Kohlu, Balochistan:**
 
-### Hover Highlighting
-
-When the cursor moves over a district:
-
-- Its boundary becomes thicker and darker.
-- A tooltip displays the district name.
-- The information panel updates with the district attributes.
-
-The information panel displays the district name, province, population, area, population density and current zoom level.
-
-### Example: Kohlu District
-
-| Attribute | Value |
-|---|---|
-| District | Kohlu |
-| Province | Balochistan |
+| Attribute | Displayed Value |
+|---|---:|
 | Population | 260,220 |
 | Area | 7,728.1 km² |
-| Population density | Approximately 34 people/km² |
-
-When the cursor moves away, `resetStyle()` restores the original district symbology.
-
-Clicking a district activates `fitBounds()`, which adjusts the map view to the selected district's geographical extent.
-
-The district information panel was positioned at the bottom-left to avoid overlapping with the layer control and legend.
+| Population density | 34 people/km² (rounded) |
 
 ---
 
 ## Checkpoint 6: Proportional Symbols in Their Own Pane
 
-### Population Circles and Density Map
+### District Population Circles
 
-![Checkpoint 6A — Proportional Population Symbols](screenshots/Checkpoint%206A.png)
+![Checkpoint 6A — Population symbols above the density layer](Checkpoint%20Screenshots/Checkpoint%206A.png)
 
-Population was represented using proportional orange circle markers placed above the population-density polygons.
+The dashboard represents **population counts** using orange proportional circle markers placed above the blue density polygons. The markers use a separate pane named `symbols` with `z-index: 450`, keeping them above the default polygon overlay pane (`z-index: 400`). Districts with missing census population values are excluded from the circle layer.
 
-A separate pane named `symbols`, with a z-index of 450, ensures that the circles remain visible above the district polygons.
-
-### Circle Size Calculation
-
-The circle radius was calculated using:
-
-`radius = Math.sqrt(population) / 160`
-
-The square root was used because the area of a circle increases with the square of its radius. This ensures that the visual area of each circle is proportional to the district population.
-
-Districts with missing population values were excluded from the proportional-symbol layer.
-
-The legend provides reference circles for populations of 1 million, 4 million and 10 million.
+The radius is calculated as `Math.sqrt(population) / 160`. Taking the square root makes **circle area**, rather than radius, proportional to population. The circle legend shows references for 1 million, 4 million and 10 million people.
 
 ### NUST Overlay — Zoom Level 5
 
-![Checkpoint 6B — NUST Zoom Level 5](screenshots/Checkpoint%206B%20Nust%205.png)
-
-At zoom level 5, the 25 km geographical circle around NUST appears relatively small on the national map.
+![Checkpoint 6B — NUST overlay at zoom level 5](Checkpoint%20Screenshots/Checkpoint%206B%20Nust%205.png)
 
 ### NUST Overlay — Zoom Level 10
 
-![Checkpoint 6B — NUST Zoom Level 10](screenshots/Checkpoint%206B%20Nust%2010.png)
+![Checkpoint 6B — NUST overlay at zoom level 10](Checkpoint%20Screenshots/Checkpoint%206B%20Nust%2010.png)
 
-At zoom level 10, the same geographical circle occupies a much larger portion of the screen, while the 6-pixel circle marker maintains approximately the same visual size.
+At zoom level 5, the 25 km geographic circle around NUST appears small at the national scale. At zoom level 10, it takes up a much larger screen area, while the 6-pixel campus marker stays approximately the same screen size.
 
-### Observation
-
-`L.circle()` defines its radius in metres and represents a geographical distance.
-
-In contrast, `L.circleMarker()` defines its radius in screen pixels and remains visually consistent across zoom levels.
-
-The 25 km geographical circle can also be compared with the map's distance scale bar.
+**`L.circle()` measures radius in metres; `L.circleMarker()` measures radius in pixels.** The 25 km circle can be compared with the Leaflet scale bar.
 
 ---
 
 ## Checkpoint 7: Map Events — On and Off
 
-![Checkpoint 7 — Coordinate Popup](screenshots/Checkpoint%207.png)
+![Checkpoint 7 — Coordinate popup over the Arabian Sea](Checkpoint%20Screenshots/Checkpoint%207.png)
 
-The coordinate-click handler was implemented using a checkbox that enables or disables coordinate popups on the map.
+The **Show coordinates on click** checkbox adds or removes a map click handler.
 
-### Experiment 1: Coordinate Clicks
+### Part 7.3 — Event Experiments
 
-With the checkbox enabled, clicking the Arabian Sea south of Karachi displayed a popup containing the selected location's coordinates.
+**1. Click the sea, then a district with the checkbox enabled.**
 
-**Recorded coordinates:**
+Clicking the Arabian Sea south of Karachi produced the coordinate popup shown in the screenshot: **24.6836°N, 66.6650°E**. A district click also activates the district's click-to-zoom behaviour; the map-level coordinate handler can run as well when the click reaches the map.
 
-- Latitude: 24.6836° N
-- Longitude: 66.6650° E
+**2. Click the legend with and without click-propagation protection.**
 
-District polygons also have their own click handler, which zooms to the selected district. With the coordinate option enabled, map-level coordinate events can also occur.
+`L.DomEvent.disableClickPropagation(div)` prevents legend clicks from reaching the map. Temporarily removing it allows a legend click to propagate and activate the map's coordinate handler. The protection must be restored after testing.
 
-### Experiment 2: Legend Click Propagation
+**3. Untick the checkbox and click the sea.**
 
-The legend uses `L.DomEvent.disableClickPropagation()` to prevent clicks inside the legend from activating the underlying map.
+Once the checkbox is turned off, `map.off('click', showCoordinates)` removes the handler, so subsequent sea clicks do not create new coordinate popups.
 
-When this protection is removed temporarily, legend clicks can propagate to the map and activate the coordinate-click handler.
-
-Restoring `disableClickPropagation()` prevents this unwanted interaction.
-
-### Experiment 3: Disabling Coordinate Popups
-
-When the checkbox is unchecked, the `showCoordinates` handler is removed through `map.off()`.
-
-Further clicks on the sea no longer generate coordinate popups.
-
-### Explanation
-
-The named function `showCoordinates` can be registered using `map.on()` and removed using `map.off()` because both operations refer to the same function.
-
-This demonstrates controlled event registration and removal in Leaflet.
+**Explanation:** `showCoordinates` is a named function, so the same handler reference is supplied to both `map.on()` and `map.off()`. The information panel also updates its displayed zoom level after `zoomend`.
 
 ---
 
 ## Checkpoint 8: Filter by Province (Extension)
 
-![Checkpoint 8 — Gilgit Baltistan Filter](screenshots/Checkpoint%208.png)
+![Checkpoint 8 — Gilgit Baltistan with the layer control open](Checkpoint%20Screenshots/Checkpoint%208.png)
 
-The province filter was tested by selecting **Gilgit Baltistan** from the drop-down menu.
+Selecting **Gilgit Baltistan** filters the map to **14 districts**. The districts appear grey and no orange population circles are displayed because the supplied `pop_2023` values are missing for these districts. This means **population data are unavailable**, not that their population is zero.
 
-### Observed Results
-
-| Measurement | Result |
+| Check | Observed Result |
 |---|---|
-| Selected province | Gilgit Baltistan |
-| Number of districts | 14 |
-| Population density shading | Grey |
-| Proportional population circles | Not displayed |
-| Population density overlay | Enabled |
-| Population overlay | Enabled |
+| Province | Gilgit Baltistan |
+| Displayed district count | 14 |
+| District density colour | Grey (missing census data) |
+| Population circles | None |
+| Overlay control | Both density and population listed and enabled |
 
-All 14 districts appeared grey because the supplied dataset does not contain population values for these districts.
-
-No proportional population circles were displayed because the `hasPopulation()` filter excludes features with missing `pop_2023` values.
-
-### Interpretation
-
-The absence of circles represents missing census information, not zero population.
-
-The dashboard should clearly communicate the unavailability of population data to prevent misleading interpretations.
-
-The layer control uses persistent feature groups, allowing the district layers to be rebuilt after province filtering while maintaining overlay controls.
+The layer control references permanent `districtGroup` and `circleGroup` objects, so the overlays can continue to be switched on and off after the filtered contents are rebuilt.
 
 ---
 
-## Checkpoint 9: SVG Versus Canvas Rendering (Extension)
+## Checkpoint 9: SVG Versus Canvas (Extension)
 
-### SVG Rendering
+### SVG Mode — Elements Panel
 
-![Checkpoint 9 — SVG Elements](screenshots/Checkpoint%209%20SVG.png)
+![Checkpoint 9 — SVG rendering](Checkpoint%20Screenshots/Checkpoint%209%20SVG.png)
 
-### Canvas Rendering
+### Canvas Mode — Elements Panel
 
-![Checkpoint 9 — Canvas Element](screenshots/Checkpoint%209%20Canvas.png)
+![Checkpoint 9 — Canvas rendering](Checkpoint%20Screenshots/Checkpoint%209%20Canvas.png)
 
-### Drawing-Time Measurements
+Five `draw(all)` timings were recorded for each renderer using the browser Console.
 
-Five measurements were recorded for each rendering mode using the browser Developer Tools Console.
+**SVG readings (ms):** 54.0, 35.7, 34.3, 41.7, 45.3
 
-**SVG measurements (ms):**
+**Sorted SVG readings:** 34.3, 35.7, **41.7**, 45.3, 54.0
 
-54.0, 35.7, 34.3, 41.7, 45.3
+**Canvas readings (ms):** 66.0, 55.5, 35.7, 37.1, 36.1
 
-**Canvas measurements (ms):**
-
-66.0, 55.5, 35.7, 37.1, 36.1
-
-### Median Calculations
-
-Sorted SVG values:
-
-34.3, 35.7, **41.7**, 45.3, 54.0
-
-**SVG median = 41.7 ms**
-
-Sorted Canvas values:
-
-35.7, 36.1, **37.1**, 55.5, 66.0
-
-**Canvas median = 37.1 ms**
+**Sorted Canvas readings:** 35.7, 36.1, **37.1**, 55.5, 66.0
 
 ### Renderer Comparison Table
 
 | Measurement | SVG | Canvas |
 |---|---|---|
-| `draw(all)`, median of five (ms) | 41.7 ms | 37.1 ms |
-| Elements inside `leaflet-overlay-pane` | 160 SVG paths | 1 canvas |
-| Hover highlighting still works? | Yes | Supported by Leaflet; verify interactively |
-| Can one district be inspected in Elements? | Yes, as an SVG path | No individual DOM path |
+| `draw(all)`, median of five | **41.7 ms** | **37.1 ms** |
+| Elements inside `leaflet-overlay-pane` | **160 SVG paths** | **1 canvas element** |
+| Hover highlighting still works? | **Yes** | **Yes** |
+| Can one district be inspected in Elements? | **Yes**, as a separate SVG path | **No**, not as a separate DOM path |
 
 ### Interpretation
 
-The measured median drawing time was **41.7 ms for SVG** and **37.1 ms for Canvas**.
+Canvas was **4.6 ms faster** than SVG by the median measure in this five-run experiment, a relatively small difference for only 160 districts.
 
-Canvas was approximately **4.6 ms faster**, a relatively small difference for the 160-district dataset.
+SVG represents each district as an individual DOM `<path>` element; Canvas paints all district geometries onto a shared drawing surface.
 
-SVG represented the districts using 160 individual path elements in the browser's Document Object Model (DOM).
+Both still support Leaflet's geographic hover interactions, but Canvas does not expose each district as a separate DOM element.
 
-Canvas used a single drawing surface to render the polygon geometries, reducing the number of DOM elements.
-
-### Expected Performance with a Tehsil-Level Dataset
-
-A tehsil-level administrative dataset would contain more geographic features and often more complex boundaries than the district dataset.
-
-SVG requires separate DOM elements for rendered geographic paths, increasing element-management and rendering overhead as the number of features grows.
-
-Canvas draws many geographical features on shared drawing surfaces, reducing DOM overhead.
-
-Therefore, Canvas would be expected to offer greater performance advantages for a dataset containing thousands of features, although the actual improvement depends on geometry complexity, browser performance and hardware.
+For a larger, more detailed **tehsil (ADM3)** dataset with many more features and vertices, Canvas would be expected to offer a greater advantage by reducing the number of DOM elements. Actual performance would still depend on geometry complexity and the browser/device and should be tested.
 
 ---
 
-# Section 10.3: Final Questions
+## Section 10.3: Final Questions
 
-## Question 1
+### Question 1
 
 **Lab 2 shaded districts by population. Name one large, thinly populated district and one small, crowded one, and explain how each would mislead on the Lab 2 map.**
 
 **Answer:**
 
-Chagai in Balochistan is a large, sparsely populated district, with approximately 269,192 people across 44,476.9 km².
+**Chagai, Balochistan** is large and sparsely populated, with **269,192 people across 44,476.9 km²**.
 
-Lahore is comparatively small but highly populated, with approximately 13,004,135 people across 1,729.9 km².
+**Lahore, Punjab** is much smaller but crowded, with **13,004,135 people across 1,729.9 km²**.
 
-On a population-count choropleth, Chagai occupies a very large geographical area despite its low population density, while Lahore appears as a relatively small polygon despite containing a highly concentrated population.
+On Lab 2's count-based choropleth, the huge mapped area of Chagai attracts visual attention even though its population is low, while densely populated Lahore occupies a comparatively small patch.
 
-This can lead viewers to misinterpret population distribution because polygon area strongly influences visual attention.
+Shading by people per km² supports a fairer comparison between different-sized districts.
 
-Population density is more appropriate for a choropleth because it accounts for geographical area and allows meaningful comparisons between districts.
-
-## Question 2
+### Question 2
 
 **radiusFor takes a square root. What would the map suggest about Lahore against a district of 3 million if it did not?**
 
 **Answer:**
 
-Lahore has approximately 13 million people, about 4.3 times the population of a district containing 3 million people.
+Lahore has about **4.3 times** the population of a 3-million-person district.
 
-Without the square root, circle radius would increase directly with population. Because circle area increases with the square of its radius, Lahore's circle would appear approximately 18.8 times larger in area.
+If radius increased directly with population rather than its square root, circle **area** would be about **18.8 times** as large, exaggerating the comparison.
 
-This would greatly exaggerate the population difference.
+Using the square root makes circle area approximately proportional to population.
 
-Taking the square root ensures that circle area, rather than radius, remains proportional to population.
-
-## Question 3
+### Question 3
 
 **Why does the layer control hold districtGroup rather than the L.geoJSON layer itself?**
 
 **Answer:**
 
-The `districtGroup` is a persistent feature group that remains available even when its contents are cleared and rebuilt.
+`districtGroup` is a persistent layer-group object.
 
-When the user changes the province, a new GeoJSON layer is created and added to this group.
+When a province is selected, the old GeoJSON layer is discarded and a newly filtered layer is added to the same group.
 
-If the layer control referenced the original GeoJSON layer directly, it would continue pointing to an outdated layer after filtering.
+The layer control can therefore continue toggling the current district polygons.
 
-Using `districtGroup` ensures that the overlay control remains functional when the selected province changes.
+If it referenced the original GeoJSON layer directly, it would point to an outdated object after filtering.
 
-## Question 4
+### Question 4
 
 **What would go wrong if the circles were drawn in overlayPane instead of the symbols pane? Describe what the user would see when hovering.**
 
 **Answer:**
 
-If the population circles and district polygons were placed in the same overlay pane, hovering over a district would call `bringToFront()` and move the highlighted polygon above the circles.
+In the same pane, a hovered district's `bringToFront()` action could put its polygon above the orange population circles, making the circles appear hidden or partially covered.
 
-Consequently, some population circles could become hidden behind the highlighted polygon.
+A separate `symbols` pane with a higher z-index keeps population circles visible above the highlighted polygons.
 
-The separate `symbols` pane, with a higher z-index than the default overlay pane, ensures that proportional circles remain visible above the district polygons during hover interactions.
-
-## Question 5
+### Question 5
 
 **Why can map.off remove showCoordinates, when it could not remove an anonymous function passed to map.on?**
 
 **Answer:**
 
-`showCoordinates` is a named function, allowing the same function reference to be passed to both `map.on()` and `map.off()`.
+`showCoordinates` is a named function, so `map.on()` and `map.off()` receive the **same function reference**.
 
-Leaflet identifies the registered handler using this function reference and removes it when the checkbox is disabled.
+An anonymous function written directly inside `map.on()` without saving a reference cannot later be identified by `map.off()` for removal.
 
-An anonymous function passed directly to `map.on()` without storing its reference cannot later be matched by `map.off()`.
-
-Therefore, named or stored function references are necessary when event handlers need to be removed.
-
-## Question 6
+### Question 6
 
 **On the NUST overlay, which circle would you use to show a 25 km evacuation zone, and which to mark the campus on a national map? Why?**
 
 **Answer:**
 
-I would use `L.circle()` to represent the 25 km evacuation zone because its radius is specified in metres and represents a real-world geographical distance.
+Use **`L.circle()`** for the 25 km evacuation zone because its radius is measured in **metres** and represents real geographic distance.
 
-I would use `L.circleMarker()` to represent the NUST campus location on a national map because its radius is measured in pixels and remains visually consistent across different zoom levels.
-
-Therefore, `L.circle()` is appropriate for distance-based geographical zones, whereas `L.circleMarker()` is suitable for displaying point locations.
-
----
+Use **`L.circleMarker()`** for the campus location because its radius is measured in **pixels** and stays visually consistent as the map is zoomed in or out.
