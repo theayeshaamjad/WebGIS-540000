@@ -3,8 +3,6 @@
 
 **Interactive web map:** [View the published Lab 3 dashboard](https://theayeshaamjad.github.io/WebGIS-540000/lab3/)
 
-**Local preview:** [Open with Live Server](http://127.0.0.1:5500/lab3/index.html)
-
 **GitHub repository:** [WebGIS-540000](https://github.com/theayeshaamjad/WebGIS-540000)
 
 ---
@@ -83,14 +81,6 @@ The dashboard displayed **160 districts**, a density legend, and a layer control
 ![Checkpoint 5 — Zoom to selected district](Checkpoint%20Screenshots/Checkpoint%205%20zoom%20in.png)
 
 Hovering over a district darkens and thickens its outline, displays a tooltip, and updates the district information panel. Moving the pointer away calls `resetStyle()` to restore its original colour. Clicking a district calls `fitBounds()` to zoom to its extent. The information panel was positioned at bottom-left so that it does not overlap the legend or layer control.
-
-**Observed example — Kohlu, Balochistan:**
-
-| Attribute | Displayed Value |
-|---|---:|
-| Population | 260,220 |
-| Area | 7,728.1 km² |
-| Population density | 34 people/km² (rounded) |
 
 ---
 
