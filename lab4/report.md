@@ -2,9 +2,8 @@
 
 **Web GIS — Districts from PostGIS**
 
-**Interactive Map (Local):** [Open Districts from PostGIS](http://127.0.0.1:8001/)
+**Interactive Map (Local):** [Open Districts from PostGIS](https://theayeshaamjad.github.io/WebGIS-540000/lab4-static/)
 
-**GeoJSON API (Local):** [View District Data](http://127.0.0.1:8001/api/districts/)
 
 ---
 
