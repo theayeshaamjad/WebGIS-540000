@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Pakistan District Explorer | Lab 4</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 0;
+            color: #23373b;
+            background: #f4f6f6;
+        }
+
+        header {
+            padding: 16px 24px 12px;
+            background: #ffffff;
+            border-bottom: 1px solid #ddd;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            margin: 6px 0 0;
+            color: #5b6a6e;
+            font-size: 14px;
+        }
+
+        #map {
+            height: calc(100vh - 110px);
+            min-height: 400px;
+            width: 100%;
+        }
+
+        .leaflet-popup-content {
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .leaflet-popup-content strong {
+            font-size: 16px;
+            color: #1b5e20;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PAGE HEADER -->
+    <header>
+        <h1>Pakistan District Explorer</h1>
+
+        <p class="subtitle">
+            <span id="count">Loading districts...</span>
+            | Interactive Leaflet Map
+        </p>
+
+        <p class="subtitle">
+            Static GeoJSON snapshot exported from GeoDjango/PostGIS.
+            Live database queries are not available.
+        </p>
+    </header>
+
+    <!-- MAP CONTAINER -->
+    <div id="map"></div>
+
+    <!-- LEAFLET JAVASCRIPT -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+
+        // =============================================
+        // 1. STATIC GEOJSON DATA SOURCE
+        // =============================================
+
+        const DISTRICTS_URL = "./data/districts.geojson";
+
+
+        // =============================================
+        // 2. INITIALIZE MAP
+        // =============================================
+
+        const map = L.map('map', {
+            maxBounds: [
+                [21.5, 58.5],
+                [39.0, 80.5]
+            ],
+            maxBoundsViscosity: 1.0,
+            minZoom: 5
+        }).setView([30.3753, 69.3451], 5);
+
+
+        // =============================================
+        // 3. ADD ESRI TOPOGRAPHIC BASEMAP
+        // =============================================
+
+        L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+            {
+                maxZoom: 18,
+                attribution:
+                    'Tiles &copy; Esri — World Topographic Map'
+            }
+        ).addTo(map);
+
+
+        // =============================================
+        // 4. PROVINCE COLOURS
+        // =============================================
+
+        const colours = {
+            'Punjab': '#1b9e77',
+            'Sindh': '#d95f02',
+            'Khyber Pakhtunkhwa': '#7570b3',
+            'Balochistan': '#e7298a',
+            'Islamabad': '#66a61e',
+            'Azad Kashmir': '#e6ab02',
+            'Gilgit Baltistan': '#a6761d'
+        };
+
+
+        // =============================================
+        // 5. FORMAT POPULATION VALUES
+        // =============================================
+
+        function show(value) {
+            return value === null || value === undefined
+                ? 'Not recorded'
+                : Number(value).toLocaleString();
+        }
+
+
+        // =============================================
+        // 6. LOAD DISTRICTS FROM STATIC GEOJSON
+        // =============================================
+
+        async function loadDistricts() {
+
+            try {
+
+                const response = await fetch(DISTRICTS_URL);
+
+                if (!response.ok) {
+                    throw new Error(
+                        'GeoJSON request failed: ' + response.status
+                    );
+                }
+
+                const data = await response.json();
+
+                // Create district polygon layer
+                const layer = L.geoJSON(data, {
+
+                    // District polygon styling
+                    style: function(feature) {
+
+                        return {
+                            color: '#ffffff',
+                            weight: 1,
+                            fillColor:
+                                colours[feature.properties.province]
+                                || '#888888',
+                            fillOpacity: 0.7
+                        };
+
+                    },
+
+                    // Hover tooltips and click popups
+                    onEachFeature: function(feature, featureLayer) {
+
+                        const p = feature.properties;
+
+                        // Tooltip displayed on hover
+                        featureLayer.bindTooltip(
+                            p.name + ', ' + p.province,
+                            {
+                                sticky: true
+                            }
+                        );
+
+                        // Information popup displayed on click
+                        featureLayer.bindPopup(
+                            '<strong>' + p.name + '</strong><br>' +
+                            'Province: ' + p.province + '<br>' +
+                            'Population (2023): ' + show(p.pop_2023) +
+                            '<br>Area: ' +
+                            (
+                                p.area_km2 == null
+                                    ? 'Not recorded'
+                                    : Number(p.area_km2).toLocaleString()
+                                      + ' km²'
+                            )
+                        );
+
+                        // Highlight district on mouse hover
+                        featureLayer.on('mouseover', function() {
+
+                            featureLayer.setStyle({
+                                weight: 3,
+                                color: '#333333',
+                                fillOpacity: 0.85
+                            });
+
+                            featureLayer.bringToFront();
+
+                        });
+
+                        // Restore styling after mouse leaves
+                        featureLayer.on('mouseout', function() {
+                            layer.resetStyle(featureLayer);
+                        });
+
+                    }
+
+                }).addTo(map);
+
+
+                // =============================================
+                // 7. ZOOM TO DISTRICT BOUNDARIES
+                // =============================================
+
+                if (data.features.length > 0) {
+                    map.fitBounds(layer.getBounds());
+                }
+
+
+                // =============================================
+                // 8. UPDATE DISTRICT COUNT
+                // =============================================
+
+                document.getElementById('count').textContent =
+                    data.features.length + ' districts';
+
+
+                console.log(
+                    'Successfully loaded ' +
+                    data.features.length +
+                    ' districts from static GeoJSON.'
+                );
+
+            } catch (error) {
+
+                console.error(
+                    'Error loading district data:',
+                    error
+                );
+
+                document.getElementById('count').textContent =
+                    'Failed to load district data';
+
+            }
+
+        }
+
+
+        // =============================================
+        // 9. START LOADING DISTRICTS
+        // =============================================
+
+        loadDistricts();
+
+    </script>
+
+</body>
+</html>
